@@ -12,7 +12,7 @@ txt_to_wav() {
   rm out-$hash.sbc
 }
 
-wav_to_txt() {
+audio_to_txt() {
   hash=$(echo $arg1 | md5sum | cut -d" " -f1)
   ffmpeg -y \
     -v info            `# verbosity - other options are "quiet", "error", "panic"` \
@@ -35,7 +35,7 @@ wav_to_txt() {
   rm out-$hash.sbc
 }
 
-wav_to_cpp() {
+audio_to_cpp() {
   hash=$(echo $arg1 | md5sum | cut -d" " -f1)
   filename=$(out-$hash.sbc)
   varname=$(echo $arg1 | rev | cut -c5- | cut -d"/" -f1,2 | rev | tr '[:lower:]' '[:upper:]' | tr "/" _)
@@ -60,14 +60,15 @@ wav_to_cpp() {
   #rm $filename
 }
 
-[ "${1}" = "-T" ] || [ "${1}" = "--txt-to-wav" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) && txt_to_wav && exit
-[ "${1}" = "-W" ] || [ "${1}" = "--wav-to-txt" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) &&  wav_to_txt && exit
-[ "${1}" = "-C" ] || [ "${1}" = "--wav-to-cpp" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) &&  wav_to_cpp && exit
+[ "${1}" = "-T" ] || [ "${1}" = "--txt-to-wav"   ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) && txt_to_wav && exit
+[ "${1}" = "-A" ] || [ "${1}" = "--audio-to-txt" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) && audio_to_txt && exit
+[ "${1}" = "-C" ] || [ "${1}" = "--audio-to-cpp" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) && audio_to_cpp && exit
 echo "
 Sound format converter:
 Usage:
   ./convert.sh [option] [input-file] [output-file]
 Options:
 -T or --txt-to-wav   Converts the text file to a wav audio file
--W or --wav-to-txt Converts a wav file to a file readable by the pinebuds firmware
+-A or --audio-to-txt Converts a wav file to a file readable by the old pinebuds firmware
+-C or --audio-to-cpp Converts a wav file to a file compilable into the pinebuds firmware
 "
